@@ -1,0 +1,454 @@
+{
+  "lastUpdated": "2026-02-21T01:52:01.021376",
+  "source": "foreman",
+  "projectCount": 11,
+  "projects": {
+    "mission-control-v2": {
+      "id": "mission-control-v2",
+      "name": "Mission Control V2",
+      "priority": "high",
+      "status": "\ud83d\ude80 Active",
+      "phase": "Deployment",
+      "progress": 79,
+      "agents": "Architect",
+      "tasks": {
+        "backlog": [
+          {
+            "id": "**foreman-sync:**-no-console-errors,-100%-reliable",
+            "title": "**Foreman Sync:** No console errors, 100% reliable data sync",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477031"
+          },
+          {
+            "id": "**project-task-loading:**-tasks-load-correctly-whe",
+            "title": "**Project Task Loading:** Tasks load correctly when drilling into any project",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477032"
+          },
+          {
+            "id": "**mobile-optimization:**-fully-responsive-on-all-m",
+            "title": "**Mobile Optimization:** Fully responsive on all mobile devices (tested on 3+ screen sizes)",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477034"
+          },
+          {
+            "id": "**loading-states:**-visual-feedback-during-all-syn",
+            "title": "**Loading States:** Visual feedback during all sync and loading operations",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477035"
+          },
+          {
+            "id": "**error-handling:**-clear-visual-feedback-for-all-",
+            "title": "**Error Handling:** Clear visual feedback for all failed operations",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477037"
+          },
+          {
+            "id": "**data-validation:**-project-counts-match-actual-f",
+            "title": "**Data Validation:** Project counts match actual Foreman data",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477039"
+          },
+          {
+            "id": "**timeline-accuracy:**-career-roadmap-reflects-act",
+            "title": "**Timeline Accuracy:** Career roadmap reflects actual time progression",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477040"
+          },
+          {
+            "id": "**vercel-deployment:**-live-production-deployment-",
+            "title": "**Vercel Deployment:** Live production deployment with GitHub integration",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477041"
+          },
+          {
+            "id": "**performance:**-page-load-<-2-seconds-on-mobile-c",
+            "title": "**Performance:** Page load < 2 seconds on mobile connection",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477042"
+          },
+          {
+            "id": "**real-time-updates:**-websocket-integration-for-l",
+            "title": "**Real-time Updates:** WebSocket integration for live data",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477043"
+          },
+          {
+            "id": "**pt-career-features:**-certification-tracker-and-",
+            "title": "**PT Career Features:** Certification tracker and client management",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477044"
+          },
+          {
+            "id": "**financial-dashboard:**-budget/expense-tracking-w",
+            "title": "**Financial Dashboard:** Budget/expense tracking with visualizations",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477045"
+          },
+          {
+            "id": "**search-functionality:**-search-across-all-dashbo",
+            "title": "**Search Functionality:** Search across all dashboard data",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477046"
+          },
+          {
+            "id": "**notification-system:**-alerts-for-important-upda",
+            "title": "**Notification System:** Alerts for important updates",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477047"
+          },
+          {
+            "id": "**data-export:**-backup-and-export-functionality",
+            "title": "**Data Export:** Backup and export functionality",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477048"
+          },
+          {
+            "id": "**calendar-integration:**-event-management-and-rem",
+            "title": "**Calendar Integration:** Event management and reminders",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477049"
+          },
+          {
+            "id": "**user-testing:**-dom-confirms-dashboard-is-useful",
+            "title": "**User Testing:** Dom confirms dashboard is useful for daily use",
+            "description": "",
+            "priority": "medium",
+            "progress": 0,
+            "createdAt": "2026-02-21T01:33:59.477050"
+          }
+        ],
+        "inProgress": [],
+        "done": [
+          {
+            "id": "html-structure-with-4-tabs",
+            "title": "HTML structure with 4 tabs",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477051"
+          },
+          {
+            "id": "dashboard-tab:-metrics,-activity-feed,-priorities",
+            "title": "Dashboard tab: metrics, activity feed, priorities",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477052"
+          },
+          {
+            "id": "projects-tab:-kanban-board-with-3-columns",
+            "title": "Projects tab: Kanban board with 3 columns",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477053"
+          },
+          {
+            "id": "timeline-tab:-visual-roadmap",
+            "title": "Timeline tab: visual roadmap",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477054"
+          },
+          {
+            "id": "notes-tab:-auto-saving-markdown-editor",
+            "title": "Notes tab: auto-saving markdown editor",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477055"
+          },
+          {
+            "id": "dark-glassmorphism-styling",
+            "title": "Dark glassmorphism styling",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477056"
+          },
+          {
+            "id": "localstorage-persistence",
+            "title": "localStorage persistence",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477057"
+          },
+          {
+            "id": "keyboard-shortcut-(cmd+k)",
+            "title": "Keyboard shortcut (Cmd+K)",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477058"
+          },
+          {
+            "id": "create-sync-foreman.sh-script",
+            "title": "Create sync-foreman.sh script",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477059"
+          },
+          {
+            "id": "parse-active-projects.md-to-json",
+            "title": "Parse active-projects.md to JSON",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477060"
+          },
+          {
+            "id": "parse-individual-plan.md-files-for-tasks",
+            "title": "Parse individual PLAN.md files for tasks",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477061"
+          },
+          {
+            "id": "project-dropdown-selector",
+            "title": "Project dropdown selector",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477062"
+          },
+          {
+            "id": "project-level-kanban-view",
+            "title": "Project-level Kanban view",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477063"
+          },
+          {
+            "id": "drill-down-to-project-tasks",
+            "title": "Drill-down to project tasks",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477064"
+          },
+          {
+            "id": "\"back-to-projects\"-navigation",
+            "title": "\"Back to Projects\" navigation",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477065"
+          },
+          {
+            "id": "project-info-card-with-progress",
+            "title": "Project info card with progress",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477066"
+          },
+          {
+            "id": "**dashboard-accuracy:**-all-metrics-calculated-fro",
+            "title": "**Dashboard Accuracy:** All metrics calculated from actual Foreman data (0% hardcoded values)",
+            "description": "",
+            "priority": "medium",
+            "progress": 100,
+            "createdAt": "2026-02-21T01:33:59.477024",
+            "completedAt": "2026-02-21T01:52:01.021364"
+          }
+        ]
+      },
+      "phases": [
+        "Phase 3 Completion (Current Focus):",
+        "Phase 4 Completion (Future):",
+        "Phase 1: Core Build (COMPLETE) \u2705",
+        "Phase 2: Foreman Integration (COMPLETE) \u2705",
+        "Phase 3: Bug Fixes & Core Improvements (IN PROGRESS) \ud83d\ude80",
+        "Phase 4: Advanced Features (PLANNED) \ud83d\udccb"
+      ]
+    },
+    "flowboard-design-documentation": {
+      "id": "flowboard-design-documentation",
+      "name": "FlowBoard Design Documentation",
+      "priority": "high",
+      "status": "\ud83d\ude80 Active",
+      "phase": "Design Phase",
+      "progress": 60,
+      "agents": "Architect",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "lock-it-in-skill-development": {
+      "id": "lock-it-in-skill-development",
+      "name": "Lock It In Skill Development",
+      "priority": "medium",
+      "status": "\ud83d\ude80 Active",
+      "phase": "Implementation",
+      "progress": 40,
+      "agents": "Alchemist",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "scout-research-framework": {
+      "id": "scout-research-framework",
+      "name": "Scout Research Framework",
+      "priority": "medium",
+      "status": "\ud83d\ude80 Active",
+      "phase": "Research Phase",
+      "progress": 30,
+      "agents": "Scout",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "daedalus-career-strategy": {
+      "id": "daedalus-career-strategy",
+      "name": "Daedalus Career Strategy",
+      "priority": "medium",
+      "status": "\ud83d\ude80 Active",
+      "phase": "Planning Phase",
+      "progress": 50,
+      "agents": "Daedalus",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "baymax-mentorship-system": {
+      "id": "baymax-mentorship-system",
+      "name": "Baymax Mentorship System",
+      "priority": "high",
+      "status": "\ud83d\ude80 Active",
+      "phase": "Implementation",
+      "progress": 70,
+      "agents": "Baymax",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "foreman-framework": {
+      "id": "foreman-framework",
+      "name": "FOREMAN Framework",
+      "priority": "medium",
+      "status": "\u2705 Complete",
+      "phase": "Done",
+      "progress": 100,
+      "agents": "Foreman",
+      "completedAt": "2026-02-18",
+      "deliverables": "Portfolio management system",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "flowboard-pm-system": {
+      "id": "flowboard-pm-system",
+      "name": "FlowBoard PM System",
+      "priority": "medium",
+      "status": "\u2705 Complete",
+      "phase": "Done",
+      "progress": 100,
+      "agents": "Coder",
+      "completedAt": "2026-02-17",
+      "deliverables": "Kanban dashboard with project tracking",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "second-brain-dashboard": {
+      "id": "second-brain-dashboard",
+      "name": "Second Brain Dashboard",
+      "priority": "medium",
+      "status": "\u2705 Complete",
+      "phase": "Done",
+      "progress": 100,
+      "agents": "Coder",
+      "completedAt": "2026-02-17",
+      "deliverables": "Contract & Nadia pages with React/Tailwind",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "task-completion-skill": {
+      "id": "task-completion-skill",
+      "name": "Task Completion Skill",
+      "priority": "medium",
+      "status": "\u2705 Complete",
+      "phase": "Done",
+      "progress": 100,
+      "agents": "Alchemist",
+      "completedAt": "2026-02-15",
+      "deliverables": "Automatic todo parsing system",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    },
+    "system-architecture-doc": {
+      "id": "system-architecture-doc",
+      "name": "System Architecture Doc",
+      "priority": "medium",
+      "status": "\u2705 Complete",
+      "phase": "Done",
+      "progress": 100,
+      "agents": "Librarian",
+      "completedAt": "2026-02-15",
+      "deliverables": "15+ page comprehensive documentation",
+      "tasks": {
+        "backlog": [],
+        "inProgress": [],
+        "done": []
+      }
+    }
+  }
+}

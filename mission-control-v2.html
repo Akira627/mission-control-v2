@@ -1,0 +1,4740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control v2 | Dom's Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            /* Colors */
+            --bg-primary: #050508;
+            --bg-secondary: rgba(15, 15, 20, 0.8);
+            --bg-card: rgba(30, 30, 40, 0.4);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.1);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --accent-primary: #10B981;
+            --accent-secondary: #059669;
+            --accent-glow: rgba(16, 185, 129, 0.3);
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            
+            /* Priority Colors */
+            --priority-high: #EF4444;
+            --priority-medium: #F59E0B;
+            --priority-low: #3B82F6;
+            
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 2.5rem;
+            --spacing-xxl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(30, 30, 40, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-blur: blur(10px);
+        }
+        
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Utility Classes */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-xl);
+        }
+        
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-normal);
+        }
+        
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            background: var(--accent-primary);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--priority-high);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .badge-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .badge-low {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            position: relative;
+        }
+        
+        .status-dot::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            opacity: 0.5;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.2; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Loading States */
+        .loading-spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-primary);
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(5, 5, 8, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: var(--radius-md);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        .loading-content .loading-spinner {
+            width: 2rem;
+            height: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .loading-pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            margin: 0 2px;
+            animation: pulse-dots 1.4s infinite ease-in-out both;
+        }
+        
+        .loading-pulse:nth-child(1) { animation-delay: -0.32s; }
+        .loading-pulse:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes pulse-dots {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.05) 25%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                rgba(255, 255, 255, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .metric-loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-loading .metric-value,
+        .metric-loading .metric-label {
+            color: transparent;
+            position: relative;
+        }
+        
+        .metric-loading .metric-value::before,
+        .metric-loading .metric-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.05) 25%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                rgba(255, 255, 255, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+        
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1.2em;
+            height: 1.2em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10B981, #059669) !important;
+            border-color: #059669 !important;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444, #DC2626) !important;
+            border-color: #DC2626 !important;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: var(--spacing-md) 0;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-icon {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: var(--spacing-xs);
+            background: rgba(0, 0, 0, 0.2);
+            padding: var(--spacing-xs);
+            border-radius: var(--radius-md);
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tab-btn.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-primary);
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .search-bar {
+            position: relative;
+        }
+        
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            width: 240px;
+            transition: all var(--transition-fast);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            width: 280px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: var(--spacing-xl) 0;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        /* Dashboard Tab */
+        .welcome-bar {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .welcome-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .welcome-text h1 {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .welcome-text p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .datetime-display {
+            text-align: right;
+        }
+        
+        .datetime-display .date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .datetime-display .time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .metric-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), #34D399);
+        }
+        
+        .metric-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+        }
+        
+        .metric-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+        }
+        
+        .metric-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+        }
+        
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .metric-icon {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+        
+        .metric-card:nth-child(2) .metric-icon {
+            color: #3B82F6;
+        }
+        
+        .metric-card:nth-child(3) .metric-icon {
+            color: #F59E0B;
+        }
+        
+        .metric-card:nth-child(4) .metric-icon {
+            color: #8B5CF6;
+        }
+        
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .trend-up {
+            color: var(--accent-primary);
+        }
+        
+        .trend-down {
+            color: var(--danger);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: var(--spacing-md);
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), #34D399);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .dashboard-columns {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+        }
+        
+        @media (max-width: 1024px) {
+            .dashboard-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .activity-feed::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        .activity-feed::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+        
+        .activity-item {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-time {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .activity-text {
+            color: var(--text-secondary);
+        }
+        
+        .priorities-section h3 {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .priorities-list {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .priority-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .priority-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .priority-checkbox.checked {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+        
+        .priority-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+        
+        .priority-text {
+            flex: 1;
+        }
+        
+        .add-priority {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .add-priority-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+        }
+        
+        /* Projects Tab */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        @media (max-width: 1024px) {
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .kanban-column {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+        }
+        
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .column-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .column-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+        }
+        
+        .tasks-list {
+            min-height: 200px;
+        }
+        
+        .task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            cursor: grab;
+            transition: all var(--transition-fast);
+        }
+        
+        .task-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .task-card.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .task-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: var(--spacing-sm);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-md);
+        }
+        
+        .task-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+        
+        .task-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all var(--transition-fast);
+        }
+        
+        .task-action-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .add-task-btn {
+            width: 100%;
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+        
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: flex-end;
+            margin-top: var(--spacing-lg);
+        }
+        
+        /* Timeline Tab */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+        
+        .phase {
+            position: relative;
+            margin-bottom: var(--spacing-xxl);
+            padding-left: 60px;
+        }
+        
+        .phase.current {
+            padding: var(--spacing-lg);
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        .phase-marker {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            z-index: 1;
+        }
+        
+        .phase.current .phase-marker {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+        
+        .phase-header {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .phase-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .phase-date {
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .phase-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .milestones-list {
+            margin-top: var(--spacing-md);
+        }
+        
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .milestone-item:last-child {
+            border-bottom: none;
+        }
+        
+        .milestone-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .milestone-checkbox.checked {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+        
+        .milestone-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+        
+        .milestone-text {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+        
+        .milestone-text.completed {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        
+        /* Notes Tab */
+        .notes-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: var(--spacing-xl);
+            height: 70vh;
+        }
+        
+        @media (max-width: 1024px) {
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .notes-editor {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .notes-textarea {
+            flex: 1;
+            padding: var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: 'Inter', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: none;
+            transition: all var(--transition-fast);
+        }
+        
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        
+        .notes-stats {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+        }
+        
+        .stats-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-secondary);
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        .save-status {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            display: none;
+        }
+        
+        .save-status.show {
+            display: block;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-xl) 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-md);
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            .nav-tabs {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .header-right {
+                order: 2;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .search-input:focus {
+                width: 100%;
+            }
+            
+            .welcome-card {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+            
+            .datetime-display {
+                text-align: center;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+        
+        .empty-state-text {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        /* Command Center Styles */
+        .agents-section,
+        .decisions-section {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+        
+        .agent-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .agent-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .agent-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .agent-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), #34D399);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .agent-info {
+            flex: 1;
+        }
+        
+        .agent-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-role {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.85rem;
+        }
+        
+        .status-dot-online {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+        
+        .status-dot-busy {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--warning);
+        }
+        
+        .status-dot-offline {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+        
+        .agent-details {
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+        }
+        
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .agent-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-md);
+        }
+        
+        .decisions-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .decision-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+        }
+        
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .decision-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .decision-question {
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--accent-primary);
+        }
+        
+        .decision-summary {
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.5;
+        }
+        
+        .decision-agents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .agent-tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+        
+        /* Modal for Agent Details */
+        .slideout-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: right var(--transition-normal);
+            overflow-y: auto;
+            padding: var(--spacing-xl);
+        }
+        
+        .slideout-panel.open {
+            right: 0;
+        }
+        
+        .slideout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .slideout-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .slideout-close:hover {
+            color: var(--text-primary);
+        }
+        
+        .loading-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted);
+        }
+        
+        .fa-spin {
+            animation: fa-spin 2s infinite linear;
+        }
+        
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ============================================
+           Enhanced Responsive Breakpoints
+           ============================================ */
+        
+        /* Extra Small Devices (Phones, < 576px) */
+        @media (max-width: 575.98px) {
+            /* Base layout adjustments */
+            .container {
+                padding: 0 var(--spacing-sm) !important;
+            }
+            
+            /* Header optimizations */
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing-sm) !important;
+                padding: var(--spacing-sm) 0;
+            }
+            
+            .nav-tabs {
+                order: 3;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: var(--spacing-xs);
+                margin-top: var(--spacing-sm);
+                scrollbar-width: none; /* Firefox */
+            }
+            
+            .nav-tabs::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Edge */
+            }
+            
+            .tab-btn {
+                padding: 0.75rem 1rem !important;
+                font-size: 0.85rem;
+                white-space: nowrap;
+                min-height: 44px; /* Touch target */
+                min-width: 60px;
+                flex-shrink: 0;
+            }
+            
+            .header-right {
+                order: 2;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-input {
+                width: 100% !important;
+                min-height: 44px;
+            }
+            
+            /* Welcome card */
+            .welcome-card {
+                flex-direction: column;
+                text-align: center;
+                padding: var(--spacing-md) !important;
+            }
+            
+            .datetime-display {
+                text-align: center;
+                margin-top: var(--spacing-sm);
+            }
+            
+            /* Metrics grid */
+            .metrics-grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-sm) !important;
+            }
+            
+            .metric-card {
+                padding: var(--spacing-md) !important;
+            }
+            
+            .metric-value {
+                font-size: 1.75rem !important;
+            }
+            
+            /* Dashboard columns */
+            .dashboard-columns {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-md) !important;
+            }
+            
+            /* Activity feed */
+            .activity-feed {
+                max-height: 300px;
+            }
+            
+            .activity-item {
+                padding: var(--spacing-sm);
+            }
+            
+            /* Priorities */
+            .priority-item {
+                padding: 0.75rem;
+            }
+            
+            .priority-checkbox {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            
+            /* Kanban board */
+            .kanban-board {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-md) !important;
+                margin-top: var(--spacing-md) !important;
+            }
+            
+            .kanban-column {
+                padding: var(--spacing-md);
+            }
+            
+            .tasks-list {
+                min-height: 150px;
+            }
+            
+            .task-card {
+                padding: var(--spacing-sm);
+                margin-bottom: var(--spacing-xs);
+            }
+            
+            .add-task-btn {
+                width: 100%;
+                min-height: 44px;
+                margin-top: var(--spacing-sm);
+            }
+            
+            /* Timeline */
+            .timeline {
+                padding: var(--spacing-lg) 0 !important;
+            }
+            
+            .timeline::before {
+                left: 20px !important;
+            }
+            
+            .phase {
+                padding-left: 40px !important;
+                margin-bottom: var(--spacing-xl) !important;
+            }
+            
+            .phase.current {
+                padding: var(--spacing-md) !important;
+            }
+            
+            .phase-marker {
+                left: 10px !important;
+                width: 16px;
+                height: 16px;
+            }
+            
+            .phase-title {
+                font-size: 1.1rem !important;
+            }
+            
+            .phase-date {
+                font-size: 0.85rem !important;
+            }
+            
+            .milestone-item {
+                padding: 0.5rem 0;
+            }
+            
+            /* Notes */
+            .notes-container {
+                grid-template-columns: 1fr !important;
+                height: auto !important;
+                min-height: 60vh;
+                gap: var(--spacing-md) !important;
+            }
+            
+            .notes-textarea {
+                min-height: 300px;
+                font-size: 16px !important; /* Prevents iOS zoom on focus */
+            }
+            
+            .notes-stats {
+                margin-top: var(--spacing-md);
+            }
+            
+            /* Command Center */
+            .agents-grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-sm) !important;
+            }
+            
+            .agent-card {
+                padding: var(--spacing-md);
+            }
+            
+            .agent-actions {
+                flex-direction: column;
+                gap: var(--spacing-xs);
+            }
+            
+            .agent-actions .btn {
+                width: 100%;
+                min-height: 44px;
+            }
+            
+            .decisions-list {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* Modals */
+            .modal-content {
+                width: 95% !important;
+                margin: 10px auto;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .form-group {
+                margin-bottom: var(--spacing-sm);
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                font-size: 16px !important; /* Prevents iOS zoom */
+                min-height: 44px;
+            }
+            
+            /* Footer */
+            .footer {
+                padding: var(--spacing-md) 0;
+                font-size: 0.8rem;
+            }
+            
+            .footer .container {
+                text-align: center;
+            }
+        }
+        
+        /* Small Devices (Phones, 576px - 767px) */
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            .container {
+                padding: 0 var(--spacing-md);
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .kanban-board {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .agents-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .tab-btn {
+                min-height: 44px;
+                padding: 0.75rem 1.25rem;
+            }
+        }
+        
+        /* Medium Devices (Tablets, 768px - 991px) */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .container {
+                padding: 0 var(--spacing-lg);
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .kanban-board {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+            
+            .agents-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .notes-container {
+                grid-template-columns: 1fr !important;
+                height: auto;
+                min-height: 60vh;
+            }
+        }
+        
+        /* ============================================
+           Touch Optimization
+           ============================================ */
+        
+        /* Ensure minimum touch target size (44px) */
+        .tab-btn,
+        .btn,
+        .add-task-btn,
+        .task-action-btn,
+        .priority-checkbox,
+        .milestone-checkbox,
+        .agent-actions .btn,
+        .modal-close,
+        .slideout-close {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Improve touch feedback */
+        .tab-btn:active,
+        .btn:active,
+        .add-task-btn:active,
+        .task-action-btn:active,
+        .tab-btn.touch-active,
+        .btn.touch-active,
+        .add-task-btn.touch-active,
+        .task-action-btn.touch-active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+            opacity: 0.9;
+        }
+        
+        /* Prevent text selection on interactive elements */
+        .tab-btn,
+        .btn,
+        .add-task-btn,
+        .task-card,
+        .agent-card,
+        .decision-card {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        /* ============================================
+           Typography Optimization for Mobile
+           ============================================ */
+        
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px;
+                line-height: 1.5;
+            }
+            
+            h1, .section-title {
+                font-size: 1.5rem !important;
+                line-height: 1.3;
+            }
+            
+            h2 {
+                font-size: 1.25rem !important;
+            }
+            
+            h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            .section-subtitle {
+                font-size: 0.9rem !important;
+            }
+            
+            .metric-label {
+                font-size: 0.85rem !important;
+            }
+            
+            .metric-value {
+                font-size: 2rem !important;
+            }
+            
+            .task-title {
+                font-size: 1rem !important;
+            }
+            
+            .task-description {
+                font-size: 0.85rem !important;
+            }
+            
+            .phase-title {
+                font-size: 1.2rem !important;
+            }
+            
+            .phase-description {
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        /* ============================================
+           Scroll Optimization
+           ============================================ */
+        
+        /* Smooth scrolling for mobile */
+        @media (max-width: 767.98px) {
+            html {
+                scroll-behavior: smooth;
+            }
+            
+            /* Improve scroll performance */
+            .activity-feed,
+            .tasks-list,
+            .notes-textarea,
+            .modal-content {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Hide scrollbars but keep functionality */
+            .activity-feed::-webkit-scrollbar,
+            .tasks-list::-webkit-scrollbar {
+                width: 4px;
+            }
+        }
+        
+        /* ============================================
+           Kanban Mobile Optimization
+           ============================================ */
+        
+        @media (max-width: 767.98px) {
+            /* Horizontal scroll for kanban columns */
+            .kanban-board.horizontal-scroll {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                gap: var(--spacing-md);
+                padding-bottom: var(--spacing-sm);
+                margin-top: var(--spacing-md);
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .kanban-board.horizontal-scroll .kanban-column {
+                flex: 0 0 85%;
+                scroll-snap-align: start;
+                min-width: 280px;
+            }
+            
+            /* Column indicators for horizontal scroll */
+            .kanban-scroll-indicators {
+                display: flex;
+                justify-content: center;
+                gap: var(--spacing-xs);
+                margin-top: var(--spacing-sm);
+            }
+            
+            .scroll-indicator {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--border-color);
+                transition: background var(--transition-fast);
+            }
+            
+            .scroll-indicator.active {
+                background: var(--accent-primary);
+            }
+        }
+        
+        /* ============================================
+           Modal & Slideout Optimization
+           ============================================ */
+        
+        @media (max-width: 767.98px) {
+            .modal.active {
+                padding: var(--spacing-sm);
+                align-items: flex-start;
+                padding-top: 20vh;
+            }
+            
+            .modal-content {
+                max-width: 100%;
+                border-radius: var(--radius-lg);
+                padding: var(--spacing-lg);
+            }
+            
+            .slideout-panel {
+                width: 100%;
+                max-width: 100%;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+            
+            /* Improve form inputs for mobile */
+            input[type="text"],
+            input[type="date"],
+            input[type="email"],
+            input[type="password"],
+            input[type="number"],
+            select,
+            textarea {
+                font-size: 16px !important; /* Prevents iOS zoom */
+            }
+            
+            /* Better spacing for form actions */
+            .form-actions {
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+        
+        /* ============================================
+           Utility Classes for Mobile
+           ============================================ */
+        
+        .mobile-only {
+            display: none;
+        }
+        
+        @media (max-width: 767.98px) {
+            .mobile-only {
+                display: block;
+            }
+            
+            .desktop-only {
+                display: none !important;
+            }
+            
+            .mobile-hide {
+                display: none !important;
+            }
+            
+            .mobile-show {
+                display: block !important;
+            }
+            
+            .mobile-flex {
+                display: flex !important;
+            }
+            
+            .mobile-column {
+                flex-direction: column !important;
+            }
+            
+            .mobile-center {
+                text-align: center !important;
+            }
+            
+            .mobile-full-width {
+                width: 100% !important;
+            }
+        }
+        
+        /* ============================================
+           Performance Optimizations
+           ============================================ */
+        
+        /* Reduce animations on mobile for better performance */
+        @media (max-width: 767.98px) {
+            .card,
+            .task-card,
+            .agent-card,
+            .decision-card {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            
+            /* Simplify shadows for mobile */
+            .card:hover,
+            .task-card:hover,
+            .agent-card:hover,
+            .decision-card:hover {
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-md);
+            }
+            
+            /* Reduce blur effects on low-powered devices */
+            .glass {
+                backdrop-filter: blur(5px);
+            }
+        }
+        
+        /* ============================================
+           Safe Area Insets (Notch Support)
+           ============================================ */
+        
+        /* Support for devices with notches */
+        @supports (padding: max(0px)) {
+            .container,
+            .header,
+            .footer {
+                padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+                padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+            }
+            
+            .header {
+                padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+            }
+            
+            .footer {
+                padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* ============================================
+           Print Styles
+           ============================================ */
+        
+        @media print {
+            .header,
+            .nav-tabs,
+            .search-bar,
+            .footer,
+            .btn,
+            .add-task-btn,
+            .task-action-btn,
+            .modal,
+            .slideout-panel {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            
+            .card,
+            .metric-card,
+            .task-card,
+            .agent-card,
+            .decision-card {
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header glass">
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">Mission Control v2</div>
+            </div>
+            
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="dashboard">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="tab-btn" data-tab="projects">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projects</span>
+                </button>
+                <button class="tab-btn" data-tab="timeline">
+                    <i class="fas fa-road"></i>
+                    <span>Timeline</span>
+                </button>
+                <button class="tab-btn" data-tab="notes">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                </button>
+                <button class="tab-btn" data-tab="command-center">
+                    <i class="fas fa-robot"></i>
+                    <span>Command Center</span>
+                </button>
+            </nav>
+            
+            <div class="header-right">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search (Cmd/Ctrl+K)" id="searchInput">
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="welcome-bar">
+                    <div class="card welcome-card">
+                        <div class="welcome-text">
+                            <h1 id="greeting">Good day, Dom</h1>
+                            <p>Your personal command center for career advancement and financial growth</p>
+                        </div>
+                        <div class="datetime-display">
+                            <div class="date" id="currentDate">Friday, February 20, 2026</div>
+                            <div class="time" id="currentTime">16:56:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="card metric-card fade-in-up">
+                        <div class="metric-header">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>12%</span>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="goalProgress">65%</div>
+                        <div class="metric-label">Goal Progress</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card fade-in-up">
+                        <div class="metric-header">
+                            <div class="metric-icon">📋</div>
+                            <div class="metric-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>3</span>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="activeProjects">8</div>
+                        <div class="metric-label">Active Projects</div>
+                    </div>
+
+                    <div class="card metric-card fade-in-up">
+                        <div class="metric-header">
+                            <div class="metric-icon">✅</div>
+                            <div class="metric-trend trend-down">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>2</span>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="tasksToday">14</div>
+                        <div class="metric-label">Tasks Today</div>
+                    </div>
+
+                    <div class="card metric-card fade-in-up">
+                        <div class="metric-header">
+                            <div class="metric-icon">⏳</div>
+                            <div class="metric-trend trend-down">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>1</span>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="daysToGoal">42</div>
+                        <div class="metric-label">Days to Goal</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-columns">
+                    <div class="activity-section">
+                        <h2 class="section-title">Recent Activity</h2>
+                        <div class="card activity-feed" id="activityFeed">
+                            <!-- Activity items will be loaded here -->
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📝</div>
+                                <div class="empty-state-text">No activity yet</div>
+                                <p class="empty-state-subtext">Your activities will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="priorities-section">
+                        <h2 class="section-title">Top Priorities</h2>
+                        <div class="card">
+                            <div class="priorities-list" id="prioritiesList">
+                                <!-- Priorities will be loaded here -->
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🎯</div>
+                                    <div class="empty-state-text">No priorities set</div>
+                                    <p class="empty-state-subtext">Add your top priorities below</p>
+                                </div>
+                            </div>
+                            <div class="add-priority">
+                                <input type="text" class="add-priority-input" id="newPriorityInput" placeholder="Add a new priority...">
+                                <button class="btn btn-sm" id="addPriorityBtn">
+                                    <i class="fas fa-plus"></i>
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projects" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <h2 id="kanbanTitle" class="section-title" style="margin-bottom: 0.25rem;">All Projects</h2>
+                        <p id="kanbanSubtitle" class="section-subtitle" style="margin: 0;">Synced with Foreman • Click a project to view tasks</p>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                        <button id="backToProjectsBtn" class="btn btn-outline" onclick="showAllProjects()" style="display: none; white-space: nowrap;">
+                            ← Back to Projects
+                        </button>
+                        <button id="syncForemanBtn" class="btn btn-outline" onclick="syncFromForeman().then(() => { this.innerHTML = '✅ Synced!'; setTimeout(() => this.innerHTML = '🔄 Sync', 2000); })" style="white-space: nowrap;">
+                            🔄 Sync
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Project Info Card (shown when viewing a project's tasks) -->
+                <div id="projectInfoCard" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; position: relative;">
+                    <div class="loading-overlay" id="projectTasksLoading" style="border-radius: 11px;">
+                        <div class="loading-content">
+                            <div class="loading-spinner"></div>
+                            <div>Loading tasks...</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3 id="projectInfoName" style="margin: 0; color: #10B981; font-size: 1.1rem;"></h3>
+                            <p id="projectInfoMeta" style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.6); font-size: 0.85rem;"></p>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div style="text-align: center;">
+                                <div id="projectInfoProgress" style="font-size: 1.5rem; font-weight: 700; color: #10B981;">0%</div>
+                                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">PROGRESS</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div id="projectInfoTasks" style="font-size: 1.5rem; font-weight: 700; color: #fff;">0</div>
+                                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">TASKS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kanban-board">
+                    <div class="loading-overlay" id="kanbanLoading">
+                        <div class="loading-content">
+                            <div class="loading-spinner"></div>
+                            <div>Loading projects...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="kanban-column" data-column="backlog">
+                        <div class="column-header">
+                            <div class="column-title">Backlog</div>
+                            <div class="column-count" id="backlogCount">0</div>
+                        </div>
+                        <div class="tasks-list" id="backlogTasks">
+                            <!-- Backlog tasks will be loaded here -->
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📥</div>
+                                <div class="empty-state-text">No tasks in backlog</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline add-task-btn" data-column="backlog">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+
+                    <div class="kanban-column" data-column="inProgress">
+                        <div class="column-header">
+                            <div class="column-title">In Progress</div>
+                            <div class="column-count" id="inProgressCount">0</div>
+                        </div>
+                        <div class="tasks-list" id="inProgressTasks">
+                            <!-- In Progress tasks will be loaded here -->
+                            <div class="empty-state">
+                                <div class="empty-state-icon">⚙️</div>
+                                <div class="empty-state-text">No tasks in progress</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline add-task-btn" data-column="inProgress">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+
+                    <div class="kanban-column" data-column="done">
+                        <div class="column-header">
+                            <div class="column-title">Done</div>
+                            <div class="column-count" id="doneCount">0</div>
+                        </div>
+                        <div class="tasks-list" id="doneTasks">
+                            <!-- Done tasks will be loaded here -->
+                            <div class="empty-state">
+                                <div class="empty-state-icon">✅</div>
+                                <div class="empty-state-text">No completed tasks</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline add-task-btn" data-column="done">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Tab -->
+            <div id="timeline" class="tab-content">
+                <h2 class="section-title">Career Roadmap</h2>
+                <p class="section-subtitle">Your journey to career advancement and financial growth</p>
+                
+                <div class="timeline">
+                    <!-- Timeline phases will be loaded here -->
+                    <div class="phase current">
+                        <div class="phase-marker"></div>
+                        <div class="phase-header">
+                            <div class="phase-title">Foundation Phase</div>
+                            <div class="phase-date">Q1 2026 - Q2 2026</div>
+                        </div>
+                        <div class="phase-description">
+                            Establish core systems, define metrics, and build the foundation for growth.
+                        </div>
+                        <div class="milestones-list">
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox checked"></div>
+                                <div class="milestone-text completed">Set up project management system</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox checked"></div>
+                                <div class="milestone-text completed">Define career advancement metrics</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Build Mission Control Dashboard v2</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Complete advanced PT certification</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="phase">
+                        <div class="phase-marker"></div>
+                        <div class="phase-header">
+                            <div class="phase-title">Growth Phase</div>
+                            <div class="phase-date">Q3 2026 - Q4 2026</div>
+                        </div>
+                        <div class="phase-description">
+                            Scale operations, expand client base, and increase revenue streams.
+                        </div>
+                        <div class="milestones-list">
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Launch online PT consultation service</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Secure 3 new corporate clients</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Increase revenue by 40%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="phase">
+                        <div class="phase-marker"></div>
+                        <div class="phase-header">
+                            <div class="phase-title">Expansion Phase</div>
+                            <div class="phase-date">2027</div>
+                        </div>
+                        <div class="phase-description">
+                            Expand to new markets, build team, and establish brand authority.
+                        </div>
+                        <div class="milestones-list">
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Hire first assistant PT</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Expand to 2 new cities</div>
+                            </div>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox"></div>
+                                <div class="milestone-text">Launch PT educational platform</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="notes" class="tab-content">
+                <h2 class="section-title">Notes & Ideas</h2>
+                <p class="section-subtitle">Auto-saves to localStorage on every keystroke</p>
+                
+                <div class="notes-container">
+                    <div class="notes-editor">
+                        <textarea class="notes-textarea" id="notesTextarea" placeholder="Start typing your notes here... Markdown supported: # Headers, **bold**, *italic*, - lists"></textarea>
+                        <div class="save-status" id="saveStatus">Saved just now</div>
+                    </div>
+                    
+                    <div class="notes-stats">
+                        <div class="stats-title">Document Stats</div>
+                        <div class="stat-item">
+                            <span class="stat-label">Characters</span>
+                            <span class="stat-value" id="charCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Words</span>
+                            <span class="stat-value" id="wordCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Lines</span>
+                            <span class="stat-value" id="lineCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Last Saved</span>
+                            <span class="stat-value" id="lastSaved">Never</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Command Center Tab -->
+            <div id="command-center" class="tab-content">
+                <h2 class="section-title">AI Command Center</h2>
+                <p class="section-subtitle">Manage your AI agents and team</p>
+                
+                <!-- Agent Grid -->
+                <div class="agents-section">
+                    <div class="section-header">
+                        <h3>AI Agents</h3>
+                        <button class="btn btn-sm" id="addAgentBtn">
+                            <i class="fas fa-plus"></i> Add Agent
+                        </button>
+                    </div>
+                    
+                    <div class="agents-grid" id="agentsGrid">
+                        <!-- Agent cards will be rendered here -->
+                        <div class="loading-state">
+                            <i class="fas fa-robot fa-spin"></i>
+                            <p>Loading agents...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Executive Decisions -->
+                <div class="decisions-section">
+                    <div class="section-header">
+                        <h3>Executive Decisions</h3>
+                        <button class="btn btn-sm btn-outline" id="addDecisionBtn">
+                            <i class="fas fa-plus"></i> Add Decision
+                        </button>
+                    </div>
+                    
+                    <div class="decisions-list" id="decisionsList">
+                        <!-- Decisions will be rendered here -->
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>No decisions recorded yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Add New Task</div>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Title</label>
+                    <input type="text" class="form-input" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Description</label>
+                    <textarea class="form-textarea" id="taskDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskPriority">Priority</label>
+                    <select class="form-select" id="taskPriority">
+                        <option value="high">High</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskColumn">Column</label>
+                    <select class="form-select" id="taskColumn">
+                        <option value="backlog">Backlog</option>
+                        <option value="inProgress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskDueDate">Due Date (Optional)</label>
+                    <input type="date" class="form-input" id="taskDueDate">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
+                    <button type="submit" class="btn" id="modalSubmit">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Agent Detail Slideout -->
+    <div class="slideout-panel" id="agentDetailPanel">
+        <div class="slideout-header">
+            <h2>Agent Details</h2>
+            <button class="slideout-close" id="agentDetailClose">&times;</button>
+        </div>
+        <div id="agentDetailContent">
+            <!-- Agent details will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Send Task Modal -->
+    <div class="modal" id="sendTaskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Send Task to Agent</div>
+                <button class="modal-close" id="sendTaskClose">&times;</button>
+            </div>
+            <form id="sendTaskForm">
+                <div class="form-group">
+                    <label class="form-label" for="taskAgentName">Agent</label>
+                    <input type="text" class="form-input" id="taskAgentName" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Task Description</label>
+                    <textarea class="form-textarea" id="sendTaskDescription" rows="6" placeholder="Describe the task you want to assign..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskPriority">Priority</label>
+                    <select class="form-select" id="sendTaskPriority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="sendTaskCancel">Cancel</button>
+                    <button type="submit" class="btn">Send Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Agent Modal -->
+    <div class="modal" id="addAgentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add New Agent</div>
+                <button class="modal-close" id="addAgentClose">&times;</button>
+            </div>
+            <form id="addAgentForm">
+                <div class="form-group">
+                    <label class="form-label" for="agentName">Agent Name</label>
+                    <input type="text" class="form-input" id="agentName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="agentRole">Role/Title</label>
+                    <input type="text" class="form-input" id="agentRole" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="agentDescription">Description</label>
+                    <textarea class="form-textarea" id="agentDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="agentCapabilities">Capabilities (comma-separated)</label>
+                    <input type="text" class="form-input" id="agentCapabilities" placeholder="e.g., coding, research, writing, analysis">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="agentModel">Model</label>
+                    <input type="text" class="form-input" id="agentModel" placeholder="e.g., GPT-4, Claude 3, DeepSeek">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="agentStatus">Status</label>
+                    <select class="form-select" id="agentStatus">
+                        <option value="online">Online</option>
+                        <option value="busy">Busy</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="addAgentCancel">Cancel</button>
+                    <button type="submit" class="btn">Add Agent</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Decision Modal -->
+    <div class="modal" id="addDecisionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Record Executive Decision</div>
+                <button class="modal-close" id="addDecisionClose">&times;</button>
+            </div>
+            <form id="addDecisionForm">
+                <div class="form-group">
+                    <label class="form-label" for="decisionQuestion">Question/Issue</label>
+                    <input type="text" class="form-input" id="decisionQuestion" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="decisionSummary">Decision Summary</label>
+                    <textarea class="form-textarea" id="decisionSummary" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="decisionAgents">Agents Consulted (comma-separated)</label>
+                    <input type="text" class="form-input" id="decisionAgents" placeholder="e.g., Akira, Foreman, Architect">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="addDecisionCancel">Cancel</button>
+                    <button type="submit" class="btn">Record Decision</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Mission Control Dashboard v2 • Built for Dom • Data stored locally in your browser</p>
+            <p>Press <kbd>Cmd/Ctrl + K</kbd> to focus search • All changes auto-saved</p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // DOM Elements
+        // ============================================
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const searchInput = document.getElementById('searchInput');
+        const greeting = document.getElementById('greeting');
+        const currentDate = document.getElementById('currentDate');
+        const currentTime = document.getElementById('currentTime');
+        const activityFeed = document.getElementById('activityFeed');
+        const prioritiesList = document.getElementById('prioritiesList');
+        const newPriorityInput = document.getElementById('newPriorityInput');
+        const addPriorityBtn = document.getElementById('addPriorityBtn');
+        const taskModal = document.getElementById('taskModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const taskForm = document.getElementById('taskForm');
+        const modalClose = document.getElementById('modalClose');
+        const modalCancel = document.getElementById('modalCancel');
+        const addTaskBtns = document.querySelectorAll('.add-task-btn');
+        const notesTextarea = document.getElementById('notesTextarea');
+        const saveStatus = document.getElementById('saveStatus');
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+        const lineCount = document.getElementById('lineCount');
+        const lastSaved = document.getElementById('lastSaved');
+
+        // Kanban columns
+        const backlogTasks = document.getElementById('backlogTasks');
+        const inProgressTasks = document.getElementById('inProgressTasks');
+        const doneTasks = document.getElementById('doneTasks');
+        const backlogCount = document.getElementById('backlogCount');
+        const inProgressCount = document.getElementById('inProgressCount');
+        const doneCount = document.getElementById('doneCount');
+        
+        // Command Center elements
+        const agentsGrid = document.getElementById('agentsGrid');
+        const decisionsList = document.getElementById('decisionsList');
+        const addAgentBtn = document.getElementById('addAgentBtn');
+        const addDecisionBtn = document.getElementById('addDecisionBtn');
+        const agentDetailPanel = document.getElementById('agentDetailPanel');
+        const agentDetailClose = document.getElementById('agentDetailClose');
+        const agentDetailContent = document.getElementById('agentDetailContent');
+        const sendTaskModal = document.getElementById('sendTaskModal');
+        const sendTaskClose = document.getElementById('sendTaskClose');
+        const sendTaskCancel = document.getElementById('sendTaskCancel');
+        const sendTaskForm = document.getElementById('sendTaskForm');
+        const addAgentModal = document.getElementById('addAgentModal');
+        const addAgentClose = document.getElementById('addAgentClose');
+        const addAgentCancel = document.getElementById('addAgentCancel');
+        const addAgentForm = document.getElementById('addAgentForm');
+        const addDecisionModal = document.getElementById('addDecisionModal');
+        const addDecisionClose = document.getElementById('addDecisionClose');
+        const addDecisionCancel = document.getElementById('addDecisionCancel');
+        const addDecisionForm = document.getElementById('addDecisionForm');
+
+        // ============================================
+        // Storage Keys
+        // ============================================
+        const STORAGE_KEYS = {
+            TASKS: 'missionControl_v2_tasks',
+            PRIORITIES: 'missionControl_v2_priorities',
+            ACTIVITIES: 'missionControl_v2_activities',
+            NOTES: 'missionControl_v2_notes',
+            SETTINGS: 'missionControl_v2_settings',
+            AGENTS: 'missionControl_v2_agents',
+            DECISIONS: 'missionControl_v2_decisions'
+        };
+
+        // ============================================
+        // State Management
+        // ============================================
+        let tasks = [];
+        let priorities = [];
+        let activities = [];
+        let currentTaskId = null;
+        let saveTimeout = null;
+
+        // ============================================
+        // Utility Functions
+        // ============================================
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'Good morning';
+            if (hour < 18) return 'Good afternoon';
+            return 'Good evening';
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-sm);
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                animation: fadeInUp 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // ============================================
+        // Storage Functions
+        // ============================================
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+                showNotification('Error saving data', 'error');
+                return false;
+            }
+        }
+
+        function loadFromStorage(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+                return defaultValue;
+            }
+        }
+
+        // ============================================
+        // Tab Navigation
+        // ============================================
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show corresponding tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // ============================================
+        // Date & Time
+        // ============================================
+        function updateDateTime() {
+            const now = new Date();
+            greeting.textContent = `${getGreeting()}, Dom`;
+            currentDate.textContent = formatDate(now);
+            currentTime.textContent = formatTime(now);
+        }
+
+        // Update time every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // ============================================
+        // Search Functionality
+        // ============================================
+        searchInput.addEventListener('focus', () => {
+            searchInput.style.width = '280px';
+        });
+
+        searchInput.addEventListener('blur', () => {
+            if (!searchInput.value) {
+                searchInput.style.width = '240px';
+            }
+        });
+
+        // Keyboard shortcut: Cmd/Ctrl + K
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        // ============================================
+        // Activity Feed
+        // ============================================
+        function addActivity(text) {
+            const activity = {
+                id: generateId(),
+                text,
+                timestamp: new Date().toISOString()
+            };
+            
+            activities.unshift(activity);
+            saveToStorage(STORAGE_KEYS.ACTIVITIES, activities);
+            renderActivities();
+            
+            // Show notification
+            showNotification('Activity added');
+        }
+
+        function renderActivities() {
+            if (activities.length === 0) {
+                activityFeed.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <div class="empty-state-text">No activity yet</div>
+                        <p class="empty-state-subtext">Your activities will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activityFeed.innerHTML = activities.slice(0, 10).map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">📌</div>
+                    <div class="activity-content">
+                        <div class="activity-time">${formatRelativeTime(new Date(activity.timestamp))}</div>
+                        <div class="activity-text">${activity.text}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // Priorities Management
+        // ============================================
+        function addPriority(text) {
+            if (!text.trim()) return;
+            
+            const priority = {
+                id: generateId(),
+                text: text.trim(),
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            priorities.push(priority);
+            saveToStorage(STORAGE_KEYS.PRIORITIES, priorities);
+            renderPriorities();
+            newPriorityInput.value = '';
+            
+            addActivity(`Added priority: "${text.trim()}"`);
+        }
+
+        function togglePriority(id) {
+            const priority = priorities.find(p => p.id === id);
+            if (priority) {
+                priority.completed = !priority.completed;
+                saveToStorage(STORAGE_KEYS.PRIORITIES, priorities);
+                renderPriorities();
+                
+                addActivity(`${priority.completed ? 'Completed' : 'Uncompleted'} priority: "${priority.text}"`);
+            }
+        }
+
+        function deletePriority(id) {
+            const priority = priorities.find(p => p.id === id);
+            if (priority) {
+                priorities = priorities.filter(p => p.id !== id);
+                saveToStorage(STORAGE_KEYS.PRIORITIES, priorities);
+                renderPriorities();
+                
+                addActivity(`Deleted priority: "${priority.text}"`);
+            }
+        }
+
+        function renderPriorities() {
+            if (priorities.length === 0) {
+                prioritiesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <div class="empty-state-text">No priorities set</div>
+                        <p class="empty-state-subtext">Add your top priorities below</p>
+                    </div>
+                `;
+                return;
+            }
+
+            prioritiesList.innerHTML = priorities.map(priority => `
+                <div class="priority-item">
+                    <div class="priority-checkbox ${priority.completed ? 'checked' : ''}" 
+                         onclick="togglePriority('${priority.id}')"></div>
+                    <div class="priority-text ${priority.completed ? 'completed' : ''}">
+                        ${priority.text}
+                    </div>
+                    <button class="task-action-btn" onclick="deletePriority('${priority.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Add priority on button click
+        addPriorityBtn.addEventListener('click', () => {
+            addPriority(newPriorityInput.value);
+        });
+
+        // Add priority on Enter key
+        newPriorityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addPriority(newPriorityInput.value);
+            }
+        });
+
+        // ============================================
+        // Task Management
+        // ============================================
+        function openTaskModal(taskId = null) {
+            currentTaskId = taskId;
+            
+            if (taskId) {
+                // Edit existing task
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    modalTitle.textContent = 'Edit Task';
+                    document.getElementById('taskTitle').value = task.title;
+                    document.getElementById('taskDescription').value = task.description;
+                    document.getElementById('taskPriority').value = task.priority;
+                    document.getElementById('taskColumn').value = task.column;
+                    document.getElementById('taskDueDate').value = task.dueDate || '';
+                }
+            } else {
+                // Add new task
+                modalTitle.textContent = 'Add New Task';
+                taskForm.reset();
+                document.getElementById('taskColumn').value = 'backlog';
+            }
+            
+            taskModal.classList.add('active');
+        }
+
+        function closeTaskModal() {
+            taskModal.classList.remove('active');
+            currentTaskId = null;
+            taskForm.reset();
+        }
+
+        function saveTask(taskData) {
+            if (currentTaskId) {
+                // Update existing task
+                const index = tasks.findIndex(t => t.id === currentTaskId);
+                if (index !== -1) {
+                    tasks[index] = { ...tasks[index], ...taskData };
+                    addActivity(`Updated task: "${taskData.title}"`);
+                }
+            } else {
+                // Add new task
+                const task = {
+                    id: generateId(),
+                    ...taskData,
+                    createdAt: new Date().toISOString(),
+                    completed: false
+                };
+                tasks.push(task);
+                addActivity(`Added task: "${taskData.title}" to ${taskData.column}`);
+            }
+            
+            saveToStorage(STORAGE_KEYS.TASKS, tasks);
+            renderTasks();
+            closeTaskModal();
+        }
+
+        function deleteTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task && confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(t => t.id !== taskId);
+                saveToStorage(STORAGE_KEYS.TASKS, tasks);
+                renderTasks();
+                addActivity(`Deleted task: "${task.title}"`);
+            }
+        }
+
+        function moveTask(taskId, newColumn) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task && task.column !== newColumn) {
+                task.column = newColumn;
+                if (newColumn === 'done') {
+                    task.completed = true;
+                    task.completedAt = new Date().toISOString();
+                } else {
+                    task.completed = false;
+                    delete task.completedAt;
+                }
+                
+                saveToStorage(STORAGE_KEYS.TASKS, tasks);
+                renderTasks();
+                addActivity(`Moved task: "${task.title}" to ${newColumn}`);
+            }
+        }
+
+        function renderTasks() {
+            // Clear all columns
+            backlogTasks.innerHTML = '';
+            inProgressTasks.innerHTML = '';
+            doneTasks.innerHTML = '';
+            
+            // Count tasks per column
+            const backlogTasksList = tasks.filter(t => t.column === 'backlog');
+            const inProgressTasksList = tasks.filter(t => t.column === 'inProgress');
+            const doneTasksList = tasks.filter(t => t.column === 'done');
+            
+            // Update counts
+            backlogCount.textContent = backlogTasksList.length;
+            inProgressCount.textContent = inProgressTasksList.length;
+            doneCount.textContent = doneTasksList.length;
+            
+            // Update dashboard metrics (only if no Foreman data is available)
+            if (!foremanData) {
+                document.getElementById('activeProjects').textContent = inProgressTasksList.length;
+                document.getElementById('tasksToday').textContent = tasks.filter(t => {
+                    if (!t.dueDate) return false;
+                    const dueDate = new Date(t.dueDate);
+                    const today = new Date();
+                    return dueDate.toDateString() === today.toDateString();
+                }).length;
+            }
+            
+            // Render tasks in each column
+            renderTaskColumn(backlogTasks, backlogTasksList);
+            renderTaskColumn(inProgressTasks, inProgressTasksList);
+            renderTaskColumn(doneTasks, doneTasksList);
+            
+            // Show empty states if no items
+            const itemType = viewMode === 'projects' ? 'projects' : 'tasks';
+            if (backlogTasksList.length === 0) {
+                backlogTasks.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📥</div>
+                        <div class="empty-state-text">No ${itemType} in backlog</div>
+                    </div>
+                `;
+            }
+            
+            if (inProgressTasksList.length === 0) {
+                inProgressTasks.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚙️</div>
+                        <div class="empty-state-text">No ${itemType} in progress</div>
+                    </div>
+                `;
+            }
+            
+            if (doneTasksList.length === 0) {
+                doneTasks.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <div class="empty-state-text">No completed ${itemType}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderTaskColumn(container, taskList) {
+            taskList.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-card' + (task.isProject ? ' project-card' : '');
+                taskElement.setAttribute('draggable', 'true');
+                taskElement.setAttribute('data-task-id', task.id);
+                if (task.isProject) {
+                    taskElement.setAttribute('data-project-id', task.id);
+                }
+                
+                const priorityClass = `badge-${task.priority}`;
+                const priorityText = task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
+                
+                if (task.isProject) {
+                    // Project card with progress bar and click to drill down
+                    taskElement.innerHTML = `
+                        <div class="task-header" style="cursor: pointer;">
+                            <div style="flex: 1;">
+                                <div class="task-title" style="color: #10B981;">📁 ${task.title}</div>
+                                <div class="task-description">${task.description || ''}</div>
+                            </div>
+                            <span class="badge ${priorityClass}">${priorityText}</span>
+                        </div>
+                        <div style="margin: 0.75rem 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                <span style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">Progress</span>
+                                <span style="font-size: 0.7rem; color: #10B981;">${task.progress || 0}%</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #10B981, #059669); height: 100%; width: ${task.progress || 0}%; transition: width 0.3s;"></div>
+                            </div>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-date" style="color: #10B981;">
+                                Click to view tasks →
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Click to drill into project
+                    taskElement.addEventListener('click', (e) => {
+                        if (!e.target.closest('.task-action-btn')) {
+                            const projectId = taskElement.getAttribute('data-project-id') || taskElement.getAttribute('data-task-id');
+                            if (projectId && window.selectProject) {
+                                selectProject(projectId);
+                            }
+                        }
+                    });
+                    taskElement.style.cursor = 'pointer';
+                } else {
+                    // Regular task card
+                    taskElement.innerHTML = `
+                        <div class="task-header">
+                            <div>
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-description">${task.description || 'No description'}</div>
+                            </div>
+                            <span class="badge ${priorityClass}">${priorityText}</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-date">
+                                ${formatRelativeTime(new Date(task.createdAt))}
+                                ${task.dueDate ? ` • Due: ${new Date(task.dueDate).toLocaleDateString()}` : ''}
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-action-btn" onclick="openTaskModal('${task.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="task-action-btn" onclick="deleteTask('${task.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Drag and drop events
+                taskElement.addEventListener('dragstart', handleDragStart);
+                taskElement.addEventListener('dragend', handleDragEnd);
+                
+                container.appendChild(taskElement);
+            });
+        }
+
+        // ============================================
+        // Command Center Functions
+        // ============================================
+        
+        function renderAgents() {
+            const agents = loadFromStorage(STORAGE_KEYS.AGENTS) || [];
+            agentsGrid.innerHTML = '';
+            
+            if (agents.length === 0) {
+                agentsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-robot empty-state-icon"></i>
+                        <p class="empty-state-text">No agents configured</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            agents.forEach(agent => {
+                const agentCard = document.createElement('div');
+                agentCard.className = 'agent-card';
+                agentCard.setAttribute('data-agent-id', agent.id);
+                
+                // Status dot class
+                let statusDotClass = 'status-dot-offline';
+                let statusText = 'Offline';
+                if (agent.status === 'online') {
+                    statusDotClass = 'status-dot-online';
+                    statusText = 'Online';
+                } else if (agent.status === 'busy') {
+                    statusDotClass = 'status-dot-busy';
+                    statusText = 'Busy';
+                }
+                
+                // Format last active time
+                const lastActive = new Date(agent.lastActive);
+                const now = new Date();
+                const diffMs = now - lastActive;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+                
+                let lastActiveText = 'Just now';
+                if (diffMins > 0 && diffMins < 60) {
+                    lastActiveText = `${diffMins}m ago`;
+                } else if (diffHours > 0 && diffHours < 24) {
+                    lastActiveText = `${diffHours}h ago`;
+                } else if (diffDays > 0) {
+                    lastActiveText = `${diffDays}d ago`;
+                }
+                
+                agentCard.innerHTML = `
+                    <div class="agent-card-header">
+                        <div class="agent-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="agent-info">
+                            <div class="agent-name">${agent.name}</div>
+                            <div class="agent-role">${agent.role}</div>
+                        </div>
+                        <div class="agent-status">
+                            <div class="${statusDotClass}"></div>
+                            <span>${statusText}</span>
+                        </div>
+                    </div>
+                    <div class="agent-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Model:</span>
+                            <span class="detail-value">${agent.model || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Last Active:</span>
+                            <span class="detail-value">${lastActiveText}</span>
+                        </div>
+                    </div>
+                    <div class="agent-actions">
+                        <button class="btn btn-sm btn-outline" onclick="openAgentDetail('${agent.id}')">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                        <button class="btn btn-sm" onclick="openSendTaskModal('${agent.id}', '${agent.name}')">
+                            <i class="fas fa-paper-plane"></i> Send Task
+                        </button>
+                    </div>
+                `;
+                
+                agentsGrid.appendChild(agentCard);
+            });
+        }
+        
+        function renderDecisions() {
+            const decisions = loadFromStorage(STORAGE_KEYS.DECISIONS) || [];
+            decisionsList.innerHTML = '';
+            
+            if (decisions.length === 0) {
+                decisionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list empty-state-icon"></i>
+                        <p class="empty-state-text">No decisions recorded yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            decisions.forEach(decision => {
+                const decisionCard = document.createElement('div');
+                decisionCard.className = 'decision-card';
+                
+                decisionCard.innerHTML = `
+                    <div class="decision-header">
+                        <div class="decision-date">${decision.date}</div>
+                    </div>
+                    <div class="decision-question">${decision.question}</div>
+                    <div class="decision-summary">${decision.summary}</div>
+                    <div class="decision-agents">
+                        ${decision.agents.map(agent => `<span class="agent-tag">${agent}</span>`).join('')}
+                    </div>
+                `;
+                
+                decisionsList.appendChild(decisionCard);
+            });
+        }
+        
+        function openAgentDetail(agentId) {
+            const agents = loadFromStorage(STORAGE_KEYS.AGENTS) || [];
+            const agent = agents.find(a => a.id === agentId);
+            
+            if (!agent) {
+                showNotification('Agent not found', 'error');
+                return;
+            }
+            
+            // Status dot class
+            let statusDotClass = 'status-dot-offline';
+            let statusText = 'Offline';
+            if (agent.status === 'online') {
+                statusDotClass = 'status-dot-online';
+                statusText = 'Online';
+            } else if (agent.status === 'busy') {
+                statusDotClass = 'status-dot-busy';
+                statusText = 'Busy';
+            }
+            
+            // Format last active time
+            const lastActive = new Date(agent.lastActive);
+            const now = new Date();
+            const diffMs = now - lastActive;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            let lastActiveText = 'Just now';
+            if (diffMins > 0 && diffMins < 60) {
+                lastActiveText = `${diffMins} minutes ago`;
+            } else if (diffHours > 0 && diffHours < 24) {
+                lastActiveText = `${diffHours} hours ago`;
+            } else if (diffDays > 0) {
+                lastActiveText = `${diffDays} days ago`;
+            }
+            
+            // Format activity log
+            const activityLogHTML = agent.activityLog && agent.activityLog.length > 0
+                ? agent.activityLog.map(activity => `
+                    <div class="detail-row">
+                        <span class="detail-label">${new Date(activity.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}:</span>
+                        <span class="detail-value">${activity.message}</span>
+                    </div>
+                `).join('')
+                : '<div class="empty-state"><p>No recent activity</p></div>';
+            
+            agentDetailContent.innerHTML = `
+                <div class="agent-card-header" style="margin-bottom: 1.5rem;">
+                    <div class="agent-avatar" style="width: 64px; height: 64px; font-size: 2rem;">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="agent-info">
+                        <div class="agent-name" style="font-size: 1.5rem;">${agent.name}</div>
+                        <div class="agent-role" style="font-size: 1.1rem;">${agent.role}</div>
+                        <div class="agent-status" style="margin-top: 0.5rem;">
+                            <div class="${statusDotClass}"></div>
+                            <span>${statusText}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <h3>Description</h3>
+                </div>
+                <p style="margin-bottom: 1.5rem; line-height: 1.6;">${agent.description}</p>
+                
+                <div class="section-header">
+                    <h3>Capabilities</h3>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    ${agent.capabilities ? agent.capabilities.map(cap => `<span class="agent-tag">${cap}</span>`).join(' ') : 'No capabilities specified'}
+                </div>
+                
+                <div class="section-header">
+                    <h3>Details</h3>
+                </div>
+                <div class="agent-details" style="margin-bottom: 1.5rem;">
+                    <div class="detail-row">
+                        <span class="detail-label">Model:</span>
+                        <span class="detail-value">${agent.model || 'Not specified'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value">${statusText}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Last Active:</span>
+                        <span class="detail-value">${lastActiveText}</span>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <h3>Performance Notes</h3>
+                </div>
+                <p style="margin-bottom: 1.5rem; line-height: 1.6;">${agent.performanceNotes || 'No performance notes available'}</p>
+                
+                <div class="section-header">
+                    <h3>Recent Activity</h3>
+                </div>
+                <div class="agent-details">
+                    ${activityLogHTML}
+                </div>
+            `;
+            
+            agentDetailPanel.classList.add('open');
+        }
+        
+        function openSendTaskModal(agentId, agentName) {
+            document.getElementById('taskAgentName').value = agentName;
+            document.getElementById('taskAgentName').setAttribute('data-agent-id', agentId);
+            sendTaskModal.style.display = 'flex';
+        }
+        
+        function closeAgentDetail() {
+            agentDetailPanel.classList.remove('open');
+        }
+        
+        // ============================================
+        // Drag and Drop
+        // ============================================
+        let draggedTask = null;
+
+        function handleDragStart(e) {
+            draggedTask = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.getAttribute('data-task-id'));
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedTask = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const taskId = e.dataTransfer.getData('text/plain');
+            const column = this.closest('.kanban-column').getAttribute('data-column');
+            
+            moveTask(taskId, column);
+        }
+
+        // Set up drag and drop for columns
+        document.querySelectorAll('.tasks-list').forEach(column => {
+            column.addEventListener('dragover', handleDragOver);
+            column.addEventListener('drop', handleDrop);
+        });
+
+        // ============================================
+        // Notes Management
+        // ============================================
+        function updateNotesStats() {
+            const text = notesTextarea.value;
+            const chars = text.length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const lines = text ? text.split('\n').length : 0;
+            
+            charCount.textContent = chars.toLocaleString();
+            wordCount.textContent = words.toLocaleString();
+            lineCount.textContent = lines.toLocaleString();
+        }
+
+        function saveNotes() {
+            const notes = notesTextarea.value;
+            saveToStorage(STORAGE_KEYS.NOTES, notes);
+            
+            // Update last saved time
+            lastSaved.textContent = 'Just now';
+            
+            // Show save status
+            saveStatus.textContent = 'Saved just now';
+            saveStatus.classList.add('show');
+            
+            // Hide after 2 seconds
+            setTimeout(() => {
+                saveStatus.classList.remove('show');
+            }, 2000);
+            
+            addActivity('Updated notes');
+        }
+
+        // Auto-save notes with debounce
+        notesTextarea.addEventListener('input', () => {
+            updateNotesStats();
+            
+            // Clear previous timeout
+            if (saveTimeout) {
+                clearTimeout(saveTimeout);
+            }
+            
+            // Set new timeout
+            saveTimeout = setTimeout(saveNotes, 1000);
+        });
+
+        // ============================================
+        // Modal Events
+        // ============================================
+        taskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const taskData = {
+                title: document.getElementById('taskTitle').value.trim(),
+                description: document.getElementById('taskDescription').value.trim(),
+                priority: document.getElementById('taskPriority').value,
+                column: document.getElementById('taskColumn').value,
+                dueDate: document.getElementById('taskDueDate').value || null
+            };
+            
+            if (!taskData.title) {
+                showNotification('Task title is required', 'error');
+                return;
+            }
+            
+            saveTask(taskData);
+        });
+
+        modalClose.addEventListener('click', closeTaskModal);
+        modalCancel.addEventListener('click', closeTaskModal);
+
+        // Close modal on background click
+        taskModal.addEventListener('click', (e) => {
+            if (e.target === taskModal) {
+                closeTaskModal();
+            }
+        });
+
+        // Command Center Event Listeners
+        agentDetailClose.addEventListener('click', closeAgentDetail);
+        
+        sendTaskClose.addEventListener('click', () => {
+            sendTaskModal.style.display = 'none';
+        });
+        
+        sendTaskCancel.addEventListener('click', () => {
+            sendTaskModal.style.display = 'none';
+        });
+        
+        sendTaskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const agentId = document.getElementById('taskAgentName').getAttribute('data-agent-id');
+            const taskDescription = document.getElementById('sendTaskDescription').value;
+            const priority = document.getElementById('sendTaskPriority').value;
+            
+            if (!agentId || !taskDescription.trim()) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Get agents from storage
+            const agents = loadFromStorage(STORAGE_KEYS.AGENTS) || [];
+            const agentIndex = agents.findIndex(a => a.id === agentId);
+            
+            if (agentIndex === -1) {
+                showNotification('Agent not found', 'error');
+                return;
+            }
+            
+            // Add task to agent's activity log
+            agents[agentIndex].activityLog.unshift({
+                timestamp: new Date().toISOString(),
+                message: `Task assigned: ${taskDescription} (Priority: ${priority})`
+            });
+            
+            // Update last active
+            agents[agentIndex].lastActive = new Date().toISOString();
+            agents[agentIndex].status = 'busy';
+            
+            // Save updated agents
+            saveToStorage(STORAGE_KEYS.AGENTS, agents);
+            
+            // Add to activity feed
+            addActivity(`Sent task to ${agents[agentIndex].name}: ${taskDescription}`);
+            
+            // Reset form and close modal
+            sendTaskForm.reset();
+            sendTaskModal.style.display = 'none';
+            
+            // Show success notification
+            showNotification(`Task sent to ${agents[agentIndex].name}!`);
+            
+            // Re-render agents
+            renderAgents();
+        });
+        
+        addAgentBtn.addEventListener('click', () => {
+            addAgentModal.style.display = 'flex';
+        });
+        
+        addAgentClose.addEventListener('click', () => {
+            addAgentModal.style.display = 'none';
+        });
+        
+        addAgentCancel.addEventListener('click', () => {
+            addAgentModal.style.display = 'none';
+        });
+        
+        addAgentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('agentName').value.trim();
+            const role = document.getElementById('agentRole').value.trim();
+            const description = document.getElementById('agentDescription').value.trim();
+            const capabilities = document.getElementById('agentCapabilities').value
+                .split(',')
+                .map(cap => cap.trim())
+                .filter(cap => cap.length > 0);
+            const model = document.getElementById('agentModel').value.trim();
+            const status = document.getElementById('agentStatus').value;
+            
+            if (!name || !role || !description) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Get existing agents
+            const agents = loadFromStorage(STORAGE_KEYS.AGENTS) || [];
+            
+            // Create new agent
+            const newAgent = {
+                id: generateId(),
+                name,
+                role,
+                description,
+                capabilities,
+                model: model || 'Not specified',
+                status,
+                lastActive: new Date().toISOString(),
+                activityLog: [],
+                performanceNotes: 'New agent - performance not yet evaluated'
+            };
+            
+            // Add to agents array
+            agents.push(newAgent);
+            
+            // Save to storage
+            saveToStorage(STORAGE_KEYS.AGENTS, agents);
+            
+            // Reset form and close modal
+            addAgentForm.reset();
+            addAgentModal.style.display = 'none';
+            
+            // Show success notification
+            showNotification(`Agent "${name}" added successfully!`);
+            
+            // Re-render agents
+            renderAgents();
+        });
+        
+        addDecisionBtn.addEventListener('click', () => {
+            addDecisionModal.style.display = 'flex';
+        });
+        
+        addDecisionClose.addEventListener('click', () => {
+            addDecisionModal.style.display = 'none';
+        });
+        
+        addDecisionCancel.addEventListener('click', () => {
+            addDecisionModal.style.display = 'none';
+        });
+        
+        addDecisionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const question = document.getElementById('decisionQuestion').value.trim();
+            const summary = document.getElementById('decisionSummary').value.trim();
+            const agents = document.getElementById('decisionAgents').value
+                .split(',')
+                .map(agent => agent.trim())
+                .filter(agent => agent.length > 0);
+            
+            if (!question || !summary) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Get existing decisions
+            const decisions = loadFromStorage(STORAGE_KEYS.DECISIONS) || [];
+            
+            // Create new decision
+            const newDecision = {
+                id: generateId(),
+                date: new Date().toISOString().split('T')[0],
+                question,
+                summary,
+                agents: agents.length > 0 ? agents : ['Not specified']
+            };
+            
+            // Add to decisions array
+            decisions.push(newDecision);
+            
+            // Save to storage
+            saveToStorage(STORAGE_KEYS.DECISIONS, decisions);
+            
+            // Reset form and close modal
+            addDecisionForm.reset();
+            addDecisionModal.style.display = 'none';
+            
+            // Show success notification
+            showNotification('Decision recorded successfully!');
+            
+            // Re-render decisions
+            renderDecisions();
+        });
+        
+        // Close modals on background click
+        sendTaskModal.addEventListener('click', (e) => {
+            if (e.target === sendTaskModal) {
+                sendTaskModal.style.display = 'none';
+            }
+        });
+        
+        addAgentModal.addEventListener('click', (e) => {
+            if (e.target === addAgentModal) {
+                addAgentModal.style.display = 'none';
+            }
+        });
+        
+        addDecisionModal.addEventListener('click', (e) => {
+            if (e.target === addDecisionModal) {
+                addDecisionModal.style.display = 'none';
+            }
+        });
+
+        // Add task buttons
+        addTaskBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const column = btn.getAttribute('data-column');
+                document.getElementById('taskColumn').value = column;
+                openTaskModal();
+            });
+        });
+
+        // ============================================
+        // Foreman Sync & Project Selection
+        // ============================================
+        let foremanData = null;
+        let currentProjectId = null;
+        
+        async function syncFromForeman() {
+            const syncBtn = document.getElementById('syncForemanBtn');
+            const originalText = syncBtn.innerHTML;
+            
+            try {
+                // Show loading state on button
+                syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
+                syncBtn.disabled = true;
+                syncBtn.classList.add('btn-loading');
+                
+                // Show loading state on kanban board
+                const kanbanLoading = document.getElementById('kanbanLoading');
+                if (kanbanLoading) {
+                    kanbanLoading.classList.add('active');
+                }
+                
+                const response = await fetch('projects-data.json?t=' + Date.now());
+                if (response.ok) {
+                    foremanData = await response.json();
+                    if (foremanData.source === 'foreman' && foremanData.projects) {
+                        populateProjectDropdown();
+                        
+                        // If a project is selected, refresh its tasks
+                        if (currentProjectId && foremanData.projects[currentProjectId]) {
+                            selectProject(currentProjectId);
+                        } else {
+                            // Show all projects
+                            showAllProjects();
+                        }
+                        
+                        // Update metrics with actual Foreman data
+                        updateDashboardMetrics();
+                        
+                        addActivity('Synced ' + foremanData.projectCount + ' projects from Foreman');
+                        console.log('✅ Synced from Foreman:', foremanData.projectCount, 'projects');
+                        
+                        // Hide kanban loading state
+                        setTimeout(() => {
+                            if (kanbanLoading) {
+                                kanbanLoading.classList.remove('active');
+                            }
+                        }, 500);
+                        
+                        // Show success state on button
+                        syncBtn.innerHTML = '<i class="fas fa-check"></i> Synced!';
+                        syncBtn.classList.remove('btn-outline', 'btn-loading');
+                        syncBtn.classList.add('btn-success');
+                        
+                        setTimeout(() => {
+                            syncBtn.innerHTML = originalText;
+                            syncBtn.classList.remove('btn-success');
+                            syncBtn.classList.add('btn-outline');
+                            syncBtn.disabled = false;
+                        }, 2000);
+                        
+                        return true;
+                    } else {
+                        throw new Error('Invalid Foreman data format');
+                    }
+                } else {
+                    throw new Error('Failed to fetch Foreman data');
+                }
+            } catch (e) {
+                console.error('Foreman sync error:', e);
+                
+                // Hide kanban loading state on error
+                const kanbanLoading = document.getElementById('kanbanLoading');
+                if (kanbanLoading) {
+                    kanbanLoading.classList.remove('active');
+                }
+                
+                // Show error state on button
+                syncBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Sync Failed';
+                syncBtn.classList.remove('btn-outline', 'btn-loading');
+                syncBtn.classList.add('btn-danger');
+                
+                // Show error notification
+                showNotification('Failed to sync from Foreman. Using local data.', 'error');
+                
+                setTimeout(() => {
+                    syncBtn.innerHTML = originalText;
+                    syncBtn.classList.remove('btn-danger');
+                    syncBtn.classList.add('btn-outline');
+                    syncBtn.disabled = false;
+                }, 3000);
+                
+                // Fallback to localStorage
+                addActivity('Foreman sync failed, using local data');
+            }
+            return false;
+        }
+        
+        function updateDashboardMetrics() {
+            if (!foremanData || !foremanData.projects) {
+                console.warn('No Foreman data available for metrics calculation');
+                // Try to update from localStorage as fallback
+                updateMetricsFromLocalStorage();
+                return;
+            }
+            
+            const projects = foremanData.projects;
+            const projectIds = Object.keys(projects);
+            
+            // Calculate Goal Progress: Average progress of all active projects
+            let totalProgress = 0;
+            let activeProjectCount = 0;
+            let totalTasks = 0;
+            let tasksToday = 0;
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            
+            projectIds.forEach(projectId => {
+                const project = projects[projectId];
+                
+                // Skip completed projects for goal progress calculation
+                const isCompleted = project.status && (
+                    project.status.includes('✅') || 
+                    project.status.toLowerCase().includes('complete') ||
+                    project.status.toLowerCase().includes('done')
+                );
+                
+                if (!isCompleted) {
+                    totalProgress += project.progress || 0;
+                    activeProjectCount++;
+                }
+                
+                // Count all tasks across all projects
+                if (project.tasks) {
+                    ['backlog', 'inProgress', 'done'].forEach(column => {
+                        if (project.tasks[column] && Array.isArray(project.tasks[column])) {
+                            const columnTasks = project.tasks[column];
+                            totalTasks += columnTasks.length;
+                            
+                            // Count tasks created today
+                            columnTasks.forEach(task => {
+                                if (task && task.createdAt && task.createdAt.startsWith(today)) {
+                                    tasksToday++;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            
+            // Calculate metrics
+            const goalProgress = activeProjectCount > 0 ? Math.round(totalProgress / activeProjectCount) : 0;
+            const activeProjects = activeProjectCount;
+            
+            // For days to goal: estimate based on remaining progress
+            // Assuming we want to reach 100% on all active projects
+            const remainingProgress = (100 * activeProjectCount) - totalProgress;
+            // Assuming 1% progress per day per project (simplified)
+            const daysToGoal = activeProjectCount > 0 ? Math.max(1, Math.ceil(remainingProgress / activeProjectCount)) : 0;
+            
+            // Update the DOM elements
+            updateMetricElements(goalProgress, activeProjects, tasksToday || totalTasks, daysToGoal);
+            
+            console.log('📊 Dashboard metrics updated from Foreman:', {
+                goalProgress,
+                activeProjects,
+                tasksToday: tasksToday || totalTasks,
+                daysToGoal,
+                projectCount: projectIds.length
+            });
+        }
+        
+        function updateMetricsFromLocalStorage() {
+            // Fallback to localStorage data when Foreman data is not available
+            const localTasks = loadFromStorage(STORAGE_KEYS.TASKS) || [];
+            const inProgressTasks = localTasks.filter(t => t.column === 'inProgress');
+            const tasksDueToday = localTasks.filter(t => {
+                if (!t.dueDate) return false;
+                const dueDate = new Date(t.dueDate);
+                const today = new Date();
+                return dueDate.toDateString() === today.toDateString();
+            }).length;
+            
+            // For local data, we don't have project progress, so use defaults
+            const goalProgress = localTasks.length > 0 ? 
+                Math.round((localTasks.filter(t => t.completed).length / localTasks.length) * 100) : 0;
+            const activeProjects = inProgressTasks.length; // Actually active tasks, but labeled as projects
+            const daysToGoal = activeProjects > 0 ? Math.max(7, activeProjects * 3) : 0; // Estimate
+            
+            updateMetricElements(goalProgress, activeProjects, tasksDueToday || localTasks.length, daysToGoal);
+            
+            console.log('📊 Dashboard metrics updated from localStorage:', {
+                goalProgress,
+                activeProjects,
+                tasksToday: tasksDueToday || localTasks.length,
+                daysToGoal
+            });
+        }
+        
+        function updateMetricElements(goalProgress, activeProjects, tasksToday, daysToGoal) {
+            const goalProgressElement = document.getElementById('goalProgress');
+            const activeProjectsElement = document.getElementById('activeProjects');
+            const tasksTodayElement = document.getElementById('tasksToday');
+            const daysToGoalElement = document.getElementById('daysToGoal');
+            const progressFillElement = document.querySelector('.progress-fill');
+            
+            // Remove loading states from metrics
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach(card => {
+                card.classList.remove('metric-loading');
+            });
+            
+            if (goalProgressElement) {
+                goalProgressElement.textContent = `${goalProgress}%`;
+            }
+            
+            if (activeProjectsElement) {
+                activeProjectsElement.textContent = activeProjects;
+            }
+            
+            if (tasksTodayElement) {
+                tasksTodayElement.textContent = tasksToday;
+            }
+            
+            if (daysToGoalElement) {
+                daysToGoalElement.textContent = daysToGoal;
+            }
+            
+            if (progressFillElement) {
+                progressFillElement.style.width = `${goalProgress}%`;
+            }
+        }
+        
+        function populateProjectDropdown() {
+            const selector = document.getElementById('projectSelector');
+            if (!selector || !foremanData) return;
+            
+            // Clear existing options except the first
+            selector.innerHTML = '<option value="">-- Select Project --</option>';
+            
+            // Group projects by status
+            const active = [];
+            const completed = [];
+            const other = [];
+            
+            Object.values(foremanData.projects).forEach(p => {
+                if (p.status.includes('Active') || p.status.includes('Phase')) {
+                    active.push(p);
+                } else if (p.status.includes('Complete')) {
+                    completed.push(p);
+                } else {
+                    other.push(p);
+                }
+            });
+            
+            // Add active projects
+            if (active.length > 0) {
+                const group = document.createElement('optgroup');
+                group.label = '🚀 Active Projects';
+                active.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = `${p.name} (${p.progress}%)`;
+                    group.appendChild(opt);
+                });
+                selector.appendChild(group);
+            }
+            
+            // Add completed projects
+            if (completed.length > 0) {
+                const group = document.createElement('optgroup');
+                group.label = '✅ Completed';
+                completed.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = p.name;
+                    group.appendChild(opt);
+                });
+                selector.appendChild(group);
+            }
+            
+            // Add other projects
+            if (other.length > 0) {
+                const group = document.createElement('optgroup');
+                group.label = '📋 Other';
+                other.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = p.name;
+                    group.appendChild(opt);
+                });
+                selector.appendChild(group);
+            }
+        }
+        
+        let viewMode = 'projects'; // 'projects' or 'tasks'
+        
+        function showAllProjects() {
+            // Hide project tasks loading state
+            const projectTasksLoading = document.getElementById('projectTasksLoading');
+            if (projectTasksLoading) {
+                projectTasksLoading.classList.remove('active');
+            }
+            
+            viewMode = 'projects';
+            currentProjectId = null;
+            
+            // Update UI
+            document.getElementById('kanbanTitle').textContent = 'All Projects';
+            document.getElementById('kanbanSubtitle').textContent = 'Synced with Foreman • Click a project to view tasks';
+            document.getElementById('backToProjectsBtn').style.display = 'none';
+            document.getElementById('projectInfoCard').style.display = 'none';
+            
+            // Update column labels
+            document.querySelectorAll('.column-title').forEach((el, i) => {
+                const labels = ['Backlog', 'In Progress', 'Done'];
+                el.textContent = labels[i] || el.textContent;
+            });
+            
+            if (!foremanData) return;
+            
+            // Load all projects into kanban columns
+            tasks = [];
+            Object.values(foremanData.projects).forEach(p => {
+                let column = 'backlog';
+                if (p.status.includes('Complete') || p.progress >= 100) {
+                    column = 'done';
+                } else if (p.status.includes('Active') || p.progress > 0) {
+                    column = 'inProgress';
+                }
+                
+                tasks.push({
+                    id: p.id,
+                    title: p.name,
+                    description: `${p.phase || p.status}\nAgent: ${p.agents || 'Unassigned'}`,
+                    priority: p.priority || 'medium',
+                    column: column,
+                    progress: p.progress || 0,
+                    createdAt: new Date().toISOString(),
+                    completed: column === 'done',
+                    isProject: true // Flag to make it clickable
+                });
+            });
+            
+            renderTasks();
+            updateMetrics();
+        }
+        
+        function selectProject(projectId) {
+            if (!projectId || !foremanData || !foremanData.projects[projectId]) {
+                showAllProjects();
+                return;
+            }
+            
+            // Show loading state for project tasks
+            const projectTasksLoading = document.getElementById('projectTasksLoading');
+            if (projectTasksLoading) {
+                projectTasksLoading.classList.add('active');
+            }
+            
+            viewMode = 'tasks';
+            currentProjectId = projectId;
+            const project = foremanData.projects[projectId];
+            
+            // Update UI
+            document.getElementById('kanbanTitle').textContent = project.name;
+            document.getElementById('kanbanSubtitle').textContent = `${project.status} • Viewing project tasks`;
+            document.getElementById('backToProjectsBtn').style.display = 'inline-flex';
+            
+            // Show project info card
+            const infoCard = document.getElementById('projectInfoCard');
+            if (infoCard) {
+                infoCard.style.display = 'block';
+                document.getElementById('projectInfoName').textContent = project.name;
+                document.getElementById('projectInfoMeta').textContent = `${project.status} • ${project.phase || 'N/A'} • Agent: ${project.agents || 'Unassigned'}`;
+                document.getElementById('projectInfoProgress').textContent = project.progress + '%';
+                
+                const taskCount = (project.tasks.backlog?.length || 0) + 
+                                  (project.tasks.inProgress?.length || 0) + 
+                                  (project.tasks.done?.length || 0);
+                document.getElementById('projectInfoTasks').textContent = taskCount;
+            }
+            
+            // Update column labels to Tasks
+            document.querySelectorAll('.column-title').forEach((el, i) => {
+                const labels = ['To Do', 'In Progress', 'Completed'];
+                el.textContent = labels[i] || el.textContent;
+            });
+            
+            // Load project tasks into kanban
+            tasks = [];
+            ['backlog', 'inProgress', 'done'].forEach(column => {
+                (project.tasks[column] || []).forEach(t => {
+                    tasks.push({
+                        id: t.id || generateId(),
+                        title: t.title,
+                        description: t.description || '',
+                        priority: t.priority || project.priority || 'medium',
+                        column: column,
+                        progress: t.progress || 0,
+                        createdAt: t.createdAt || new Date().toISOString(),
+                        completed: column === 'done',
+                        isProject: false
+                    });
+                });
+            });
+            
+            // If no tasks, show a message
+            if (tasks.length === 0) {
+                tasks.push({
+                    id: generateId(),
+                    title: 'No tasks defined',
+                    description: `Add tasks to this project's PLAN.md in Foreman`,
+                    priority: 'low',
+                    column: 'backlog',
+                    progress: 0,
+                    createdAt: new Date().toISOString(),
+                    completed: false,
+                    isProject: false
+                });
+            }
+            
+            renderTasks();
+            updateMetrics();
+            
+            // Hide loading state after rendering
+            setTimeout(() => {
+                if (projectTasksLoading) {
+                    projectTasksLoading.classList.remove('active');
+                }
+            }, 500);
+        }
+
+        // ============================================
+        // Initialize App
+        // ============================================
+        async function initApp() {
+            // Show initial loading state for kanban
+            const kanbanLoading = document.getElementById('kanbanLoading');
+            if (kanbanLoading) {
+                kanbanLoading.classList.add('active');
+            }
+            
+            // Add loading state to metrics
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach(card => {
+                card.classList.add('metric-loading');
+            });
+            
+            // Add loading state to activity feed
+            const activityFeed = document.getElementById('activityFeed');
+            if (activityFeed) {
+                activityFeed.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading-spinner" style="margin-bottom: 1rem;"></div>
+                        <div>Loading activity...</div>
+                    </div>
+                `;
+            }
+            
+            // Add loading state to priorities
+            const prioritiesList = document.getElementById('prioritiesList');
+            if (prioritiesList) {
+                prioritiesList.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading-spinner" style="margin-bottom: 1rem;"></div>
+                        <div>Loading priorities...</div>
+                    </div>
+                `;
+            }
+            
+            // Always sync from Foreman first
+            await syncFromForeman();
+            
+            // Show all projects view by default
+            if (foremanData && foremanData.projects) {
+                showAllProjects();
+            } else {
+                // Fallback to local tasks if no Foreman data
+                tasks = loadFromStorage(STORAGE_KEYS.TASKS);
+            }
+            priorities = loadFromStorage(STORAGE_KEYS.PRIORITIES);
+            activities = loadFromStorage(STORAGE_KEYS.ACTIVITIES);
+            const savedNotes = loadFromStorage(STORAGE_KEYS.NOTES, '');
+            
+            // Set notes
+            notesTextarea.value = savedNotes;
+            updateNotesStats();
+            
+            // Set last saved time
+            if (savedNotes) {
+                lastSaved.textContent = 'Just now';
+            }
+            
+            // Add initial activities if empty
+            if (activities.length === 0) {
+                activities = [
+                    {
+                        id: generateId(),
+                        text: 'Welcome to Mission Control v2!',
+                        timestamp: new Date().toISOString()
+                    },
+                    {
+                        id: generateId(),
+                        text: 'Dashboard initialized successfully',
+                        timestamp: new Date(Date.now() - 300000).toISOString() // 5 minutes ago
+                    }
+                ];
+                saveToStorage(STORAGE_KEYS.ACTIVITIES, activities);
+            }
+            
+            // Add sample priorities if empty
+            if (priorities.length === 0) {
+                priorities = [
+                    {
+                        id: generateId(),
+                        text: 'Complete advanced PT certification',
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: generateId(),
+                        text: 'Update professional portfolio',
+                        completed: true,
+                        createdAt: new Date(Date.now() - 86400000).toISOString() // 1 day ago
+                    },
+                    {
+                        id: generateId(),
+                        text: 'Research new PT techniques',
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                saveToStorage(STORAGE_KEYS.PRIORITIES, priorities);
+            }
+            
+            // Add sample tasks if empty
+            if (tasks.length === 0) {
+                tasks = [
+                    {
+                        id: generateId(),
+                        title: 'Review client progress reports',
+                        description: 'Check all client progress and update treatment plans',
+                        priority: 'high',
+                        column: 'inProgress',
+                        createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+                        dueDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
+                        completed: false
+                    },
+                    {
+                        id: generateId(),
+                        title: 'Update billing system',
+                        description: 'Migrate to new billing software',
+                        priority: 'medium',
+                        column: 'backlog',
+                        createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+                        dueDate: null,
+                        completed: false
+                    },
+                    {
+                        id: generateId(),
+                        title: 'Complete insurance paperwork',
+                        description: 'Submit quarterly insurance claims',
+                        priority: 'high',
+                        column: 'done',
+                        createdAt: new Date(Date.now() - 604800000).toISOString(), // 7 days ago
+                        completedAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+                        completed: true
+                    },
+                    {
+                        id: generateId(),
+                        title: 'Schedule team meeting',
+                        description: 'Plan agenda for monthly team sync',
+                        priority: 'low',
+                        column: 'inProgress',
+                        createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+                        dueDate: new Date(Date.now() + 259200000).toISOString().split('T')[0], // 3 days from now
+                        completed: false
+                    }
+                ];
+                saveToStorage(STORAGE_KEYS.TASKS, tasks);
+            }
+            
+            // Add sample agents if empty
+            let agents = loadFromStorage(STORAGE_KEYS.AGENTS) || [];
+            if (agents.length === 0) {
+                agents = [
+                    {
+                        id: generateId(),
+                        name: 'Akira',
+                        role: 'Main Assistant',
+                        description: 'Primary AI assistant for general tasks, research, and coordination',
+                        capabilities: ['coding', 'research', 'writing', 'analysis', 'coordination'],
+                        model: 'GPT-4',
+                        status: 'online',
+                        lastActive: new Date().toISOString(),
+                        activityLog: [
+                            { timestamp: new Date(Date.now() - 3600000).toISOString(), message: 'Helped with project planning' },
+                            { timestamp: new Date(Date.now() - 7200000).toISOString(), message: 'Researched new technologies' },
+                            { timestamp: new Date(Date.now() - 10800000).toISOString(), message: 'Updated documentation' }
+                        ],
+                        performanceNotes: 'Highly reliable, excellent at research tasks'
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Foreman',
+                        role: 'Project Manager',
+                        description: 'Manages project workflows, tracks progress, and coordinates teams',
+                        capabilities: ['project management', 'workflow automation', 'progress tracking', 'team coordination'],
+                        model: 'Claude 3',
+                        status: 'busy',
+                        lastActive: new Date(Date.now() - 1800000).toISOString(), // 30 minutes ago
+                        activityLog: [
+                            { timestamp: new Date(Date.now() - 5400000).toISOString(), message: 'Updated project timelines' },
+                            { timestamp: new Date(Date.now() - 9000000).toISOString(), message: 'Coordinated team tasks' },
+                            { timestamp: new Date(Date.now() - 12600000).toISOString(), message: 'Generated progress reports' }
+                        ],
+                        performanceNotes: 'Excellent at keeping projects on track'
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Architect',
+                        role: 'System Designer',
+                        description: 'Designs system architectures and technical solutions',
+                        capabilities: ['system design', 'architecture planning', 'technical documentation', 'code review'],
+                        model: 'DeepSeek Coder',
+                        status: 'online',
+                        lastActive: new Date(Date.now() - 600000).toISOString(), // 10 minutes ago
+                        activityLog: [
+                            { timestamp: new Date(Date.now() - 4200000).toISOString(), message: 'Designed new database schema' },
+                            { timestamp: new Date(Date.now() - 7800000).toISOString(), message: 'Reviewed technical specifications' },
+                            { timestamp: new Date(Date.now() - 11400000).toISOString(), message: 'Created architecture diagrams' }
+                        ],
+                        performanceNotes: 'Strong technical design skills'
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Analyst',
+                        role: 'Data Analyst',
+                        description: 'Analyzes data and provides insights for decision making',
+                        capabilities: ['data analysis', 'statistics', 'visualization', 'reporting'],
+                        model: 'GPT-4',
+                        status: 'offline',
+                        lastActive: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+                        activityLog: [
+                            { timestamp: new Date(Date.now() - 172800000).toISOString(), message: 'Analyzed user metrics' },
+                            { timestamp: new Date(Date.now() - 259200000).toISOString(), message: 'Generated quarterly reports' },
+                            { timestamp: new Date(Date.now() - 345600000).toISOString(), message: 'Created data visualizations' }
+                        ],
+                        performanceNotes: 'Good with numbers, needs improvement on presentation'
+                    }
+                ];
+                saveToStorage(STORAGE_KEYS.AGENTS, agents);
+            }
+            
+            // Add sample decisions if empty
+            let decisions = loadFromStorage(STORAGE_KEYS.DECISIONS) || [];
+            if (decisions.length === 0) {
+                decisions = [
+                    {
+                        id: generateId(),
+                        date: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
+                        question: 'Which project management tool should we adopt?',
+                        summary: 'Decided to use Mission Control v2 as the primary dashboard instead of external tools',
+                        agents: ['Akira', 'Foreman', 'Architect']
+                    },
+                    {
+                        id: generateId(),
+                        date: new Date(Date.now() - 172800000).toISOString().split('T')[0], // 2 days ago
+                        question: 'Should we prioritize mobile optimization or new features?',
+                        summary: 'Mobile optimization first, then add advanced features in Phase 4',
+                        agents: ['Akira', 'Foreman']
+                    },
+                    {
+                        id: generateId(),
+                        date: new Date(Date.now() - 259200000).toISOString().split('T')[0], // 3 days ago
+                        question: 'How to handle data persistence for Mission Control?',
+                        summary: 'Use localStorage for simplicity, with option to export/import data',
+                        agents: ['Architect', 'Analyst']
+                    }
+                ];
+                saveToStorage(STORAGE_KEYS.DECISIONS, decisions);
+            }
+            
+            // Render everything
+            renderActivities();
+            renderPriorities();
+            renderTasks();
+            renderAgents();
+            renderDecisions();
+            
+            // Hide loading state after rendering
+            setTimeout(() => {
+                const kanbanLoading = document.getElementById('kanbanLoading');
+                if (kanbanLoading) {
+                    kanbanLoading.classList.remove('active');
+                }
+            }, 500);
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('Mission Control v2 loaded successfully!');
+            }, 1000);
+        }
+
+        // Make functions available globally for inline event handlers
+        window.togglePriority = togglePriority;
+        window.deletePriority = deletePriority;
+        window.openTaskModal = openTaskModal;
+        window.deleteTask = deleteTask;
+        window.openAgentDetail = openAgentDetail;
+        window.openSendTaskModal = openSendTaskModal;
+        window.selectProject = selectProject;
+        window.showAllProjects = showAllProjects;
+        window.syncFromForeman = syncFromForeman;
+
+        // ============================================
+        // Mobile Optimization Functions
+        // ============================================
+        
+        // Initialize mobile optimizations
+        function initMobileOptimizations() {
+            setupKanbanMobileScroll();
+            setupTouchOptimizations();
+            setupResponsiveNavigation();
+            updateMobileLayout();
+            
+            // Listen for window resize
+            window.addEventListener('resize', debounce(updateMobileLayout, 250));
+        }
+        
+        // Setup horizontal scroll for kanban on mobile
+        function setupKanbanMobileScroll() {
+            const kanbanBoard = document.querySelector('.kanban-board');
+            if (!kanbanBoard) return;
+            
+            // Check if we're on mobile
+            const isMobile = window.innerWidth <= 767.98;
+            
+            if (isMobile) {
+                // Add horizontal scroll class
+                kanbanBoard.classList.add('horizontal-scroll');
+                
+                // Create scroll indicators
+                createKanbanScrollIndicators(kanbanBoard);
+                
+                // Update indicators on scroll
+                kanbanBoard.addEventListener('scroll', debounce(() => {
+                    updateScrollIndicators(kanbanBoard);
+                }, 100));
+            } else {
+                // Remove horizontal scroll class
+                kanbanBoard.classList.remove('horizontal-scroll');
+                
+                // Remove indicators if they exist
+                const indicators = document.querySelector('.kanban-scroll-indicators');
+                if (indicators) indicators.remove();
+            }
+        }
+        
+        // Create scroll indicators for kanban
+        function createKanbanScrollIndicators(kanbanBoard) {
+            // Remove existing indicators
+            const existingIndicators = document.querySelector('.kanban-scroll-indicators');
+            if (existingIndicators) existingIndicators.remove();
+            
+            // Create new indicators container
+            const indicatorsContainer = document.createElement('div');
+            indicatorsContainer.className = 'kanban-scroll-indicators';
+            
+            // Get number of columns
+            const columns = kanbanBoard.querySelectorAll('.kanban-column');
+            columns.forEach((column, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = 'scroll-indicator';
+                if (index === 0) indicator.classList.add('active');
+                indicatorsContainer.appendChild(indicator);
+            });
+            
+            // Insert after kanban board
+            kanbanBoard.parentNode.insertBefore(indicatorsContainer, kanbanBoard.nextSibling);
+        }
+        
+        // Update scroll indicators
+        function updateScrollIndicators(kanbanBoard) {
+            const indicators = document.querySelectorAll('.scroll-indicator');
+            if (!indicators.length) return;
+            
+            const scrollLeft = kanbanBoard.scrollLeft;
+            const scrollWidth = kanbanBoard.scrollWidth;
+            const clientWidth = kanbanBoard.clientWidth;
+            
+            // Calculate which column is most visible
+            const columnWidth = scrollWidth / indicators.length;
+            const activeIndex = Math.round(scrollLeft / columnWidth);
+            
+            // Update indicators
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === activeIndex);
+            });
+        }
+        
+        // Setup touch optimizations
+        function setupTouchOptimizations() {
+            // Add touch feedback to buttons
+            const touchElements = document.querySelectorAll('.tab-btn, .btn, .add-task-btn, .task-action-btn');
+            touchElements.forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.classList.add('touch-active');
+                });
+                
+                element.addEventListener('touchend', function() {
+                    this.classList.remove('touch-active');
+                });
+            });
+            
+            // Prevent long-press text selection on interactive elements
+            const noSelectElements = document.querySelectorAll('.tab-btn, .btn, .add-task-btn, .task-card, .agent-card, .decision-card');
+            noSelectElements.forEach(element => {
+                element.addEventListener('contextmenu', e => e.preventDefault());
+                element.style.webkitTouchCallout = 'none';
+                element.style.webkitUserSelect = 'none';
+            });
+        }
+        
+        // Setup responsive navigation
+        function setupResponsiveNavigation() {
+            const navTabs = document.querySelector('.nav-tabs');
+            if (!navTabs) return;
+            
+            // Add scroll to center active tab on mobile
+            const activeTab = navTabs.querySelector('.tab-btn.active');
+            if (activeTab && window.innerWidth <= 767.98) {
+                activeTab.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        }
+        
+        // Update mobile layout based on screen size
+        function updateMobileLayout() {
+            setupKanbanMobileScroll();
+            setupResponsiveNavigation();
+            
+            // Update font size for mobile
+            const isMobile = window.innerWidth <= 767.98;
+            document.body.classList.toggle('mobile-view', isMobile);
+            
+            // Update tab button sizes
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                if (isMobile) {
+                    btn.style.minHeight = '44px';
+                    btn.style.minWidth = '44px';
+                } else {
+                    btn.style.minHeight = '';
+                    btn.style.minWidth = '';
+                }
+            });
+        }
+        
+        // Debounce function for resize events
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // Add mobile optimizations to initialization
+        const originalInitApp = window.initApp;
+        window.initApp = function() {
+            if (originalInitApp) originalInitApp();
+            initMobileOptimizations();
+        };
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

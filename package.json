@@ -1,0 +1,23 @@
+{
+  "name": "mission-control-v2",
+  "version": "1.0.0",
+  "description": "Mission Control v2 Dashboard - Dom's Command Center",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "dashboard",
+    "productivity",
+    "project-management",
+    "career-tracking"
+  ],
+  "author": "Dom",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {}
+}
